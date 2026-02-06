@@ -1,0 +1,128 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ShouldIDeployApp.ViewModels"
+        x:Class="ShouldIDeployApp.Views.MainWindow"
+        Title="Should I Deploy Today?"
+        Width="700" Height="500"
+        MinWidth="400" MinHeight="350"
+        x:DataType="vm:MainWindowViewModel">
+
+    <Window.Resources>
+        <SolidColorBrush x:Key="ToastSuccessBrush" Color="#4CAF50" />
+        <SolidColorBrush x:Key="ToastDangerBrush" Color="#F44336" />
+    </Window.Resources>
+
+    <Grid RowDefinitions="*,Auto">
+        <!-- Main Content Area -->
+        <Border Grid.Row="0"
+                Background="{Binding BackgroundColor}"
+                CornerRadius="0">
+            <Grid RowDefinitions="Auto,*,Auto">
+                <!-- Header -->
+                <TextBlock Grid.Row="0"
+                           Text="Should I Deploy Today?"
+                           FontSize="20"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"
+                           Margin="0,20,0,0"
+                           Foreground="{Binding ForegroundColor}" />
+
+                <!-- Main Status Display -->
+                <StackPanel Grid.Row="1"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Spacing="16">
+                    <TextBlock Text="{Binding StatusText}"
+                               FontSize="72"
+                               FontWeight="ExtraBold"
+                               HorizontalAlignment="Center"
+                               Foreground="{Binding ForegroundColor}" />
+                    <TextBlock Text="{Binding Reason}"
+                               FontSize="22"
+                               FontWeight="Normal"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"
+                               MaxWidth="500"
+                               Foreground="{Binding ForegroundColor}"
+                               Opacity="0.85" />
+                </StackPanel>
+
+                <!-- Info Bar -->
+                <TextBlock Grid.Row="2"
+                           Text="{Binding LastChecked}"
+                           FontSize="12"
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,10"
+                           Foreground="{Binding ForegroundColor}"
+                           Opacity="0.6" />
+            </Grid>
+        </Border>
+
+        <!-- Bottom Toolbar -->
+        <Border Grid.Row="1"
+                Background="#F5F5F5"
+                Padding="12,8">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto">
+                <!-- Timezone Selector -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                    <TextBlock Text="Timezone:" VerticalAlignment="Center" FontSize="12" />
+                    <ComboBox ItemsSource="{Binding AvailableTimezones}"
+                              SelectedItem="{Binding SelectedTimezone}"
+                              MaxDropDownHeight="300"
+                              Width="250"
+                              FontSize="12" />
+                </StackPanel>
+
+                <!-- Spacer -->
+                <Panel Grid.Column="1" />
+
+                <!-- Refresh Button -->
+                <Button Grid.Column="2"
+                        Command="{Binding RefreshCommand}"
+                        Content="↻ Refresh"
+                        Margin="0,0,8,0"
+                        FontSize="12"
+                        Padding="12,6" />
+
+                <!-- Full Screen Toggle -->
+                <Button Grid.Column="3"
+                        Command="{Binding ToggleFullScreenCommand}"
+                        Content="{Binding FullScreenButtonText}"
+                        FontSize="12"
+                        Padding="12,6" />
+            </Grid>
+        </Border>
+
+        <!-- Toast Notification Overlay -->
+        <Border Grid.Row="0"
+                Grid.RowSpan="2"
+                IsVisible="{Binding IsToastVisible}"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Margin="16"
+                Padding="16,12"
+                CornerRadius="8"
+                MaxWidth="380"
+                Background="#333333"
+                BoxShadow="0 4 12 0 #40000000">
+            <Grid ColumnDefinitions="*,Auto">
+                <TextBlock Grid.Column="0"
+                           Text="{Binding ToastMessage}"
+                           Foreground="White"
+                           FontSize="14"
+                           TextWrapping="Wrap"
+                           VerticalAlignment="Center"
+                           Margin="0,0,12,0" />
+                <Button Grid.Column="1"
+                        Command="{Binding DismissToastCommand}"
+                        Content="✕"
+                        Background="Transparent"
+                        Foreground="White"
+                        FontSize="14"
+                        Padding="4,2"
+                        VerticalAlignment="Top" />
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

@@ -13,3 +13,7 @@ public/bundle.js
 .vercel
 .idea
 coverage/
+
+# .NET
+ShouldIDeployApp/**/bin/
+ShouldIDeployApp/**/obj/
