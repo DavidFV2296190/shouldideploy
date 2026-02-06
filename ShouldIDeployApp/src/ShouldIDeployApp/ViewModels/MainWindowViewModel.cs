@@ -110,8 +110,15 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
     private async Task AutoDismissToastAsync()
     {
-        await Task.Delay(TimeSpan.FromSeconds(8));
-        IsToastVisible = false;
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(8));
+            IsToastVisible = false;
+        }
+        catch (TaskCanceledException)
+        {
+            // Expected when the app is closing
+        }
     }
 
     private void UpdateFromResult(DeploymentResult result)
