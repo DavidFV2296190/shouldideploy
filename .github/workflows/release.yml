@@ -1,5 +1,8 @@
 name: Publish release
 
+permissions:
+  contents: write
+
 on:
   push:
     tags:
@@ -26,7 +29,7 @@ jobs:
       - name: Restore solution
         run: dotnet restore ${{ env.SOLUTION_PATH }}
       - name: Run unit tests
-        run: dotnet test ${{ env.SOLUTION_PATH }} --no-restore --no-build
+        run: dotnet test ${{ env.SOLUTION_PATH }} --no-restore
       - name: Determine release tag
         id: tag
         run: |
@@ -48,7 +51,10 @@ jobs:
               -p:PublishSingleFile=true \
               -p:PublishTrimmed=false \
               -o "${{ env.PUBLISH_BASE }}/${runtime}"
-            zip -j "${{ env.PUBLISH_BASE }}/ShouldIDeployApp-${runtime}.zip" "${{ env.PUBLISH_BASE }}/${runtime}"/*
+            (
+              cd "${{ env.PUBLISH_BASE }}/${runtime}"
+              zip -r "../ShouldIDeployApp-${runtime}.zip" .
+            )
           done
         shell: bash
       - name: Create release
