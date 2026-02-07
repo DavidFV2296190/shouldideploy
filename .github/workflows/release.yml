@@ -1,0 +1,66 @@
+name: Publish release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag name to publish (must match git tag)'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      SOLUTION_PATH: ShouldIDeployApp/ShouldIDeployApp.sln
+      PROJECT_PATH: ShouldIDeployApp/src/ShouldIDeployApp/ShouldIDeployApp.csproj
+      PUBLISH_BASE: publish
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore solution
+        run: dotnet restore ${{ env.SOLUTION_PATH }}
+      - name: Run unit tests
+        run: dotnet test ${{ env.SOLUTION_PATH }} --no-restore --no-build
+      - name: Determine release tag
+        id: tag
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "release_tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "release_tag=${{ github.event.inputs.tag }}" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+      - name: Publish self-contained builds
+        run: |
+          set -euxo pipefail
+          runtimes=(win-x64 osx-x64 osx-arm64 linux-x64)
+          mkdir -p "${{ env.PUBLISH_BASE }}"
+          for runtime in "${runtimes[@]}"; do
+            dotnet publish "${{ env.PROJECT_PATH }}" \
+              -c Release -r "$runtime" \
+              --self-contained true \
+              -p:PublishSingleFile=true \
+              -p:PublishTrimmed=false \
+              -o "${{ env.PUBLISH_BASE }}/${runtime}"
+            zip -j "${{ env.PUBLISH_BASE }}/ShouldIDeployApp-${runtime}.zip" "${{ env.PUBLISH_BASE }}/${runtime}"/*
+          done
+        shell: bash
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.release_tag }}
+          name: Should I Deploy Today? ${{ steps.tag.outputs.release_tag }}
+          body_path: docs/release-notes.md
+          files: |
+            publish/ShouldIDeployApp-win-x64.zip
+            publish/ShouldIDeployApp-osx-x64.zip
+            publish/ShouldIDeployApp-osx-arm64.zip
+            publish/ShouldIDeployApp-linux-x64.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
