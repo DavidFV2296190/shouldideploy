@@ -1,6 +1,6 @@
 # Release Notes for Should I Deploy Today?
 
-**Version:** v1.0.1
+**Version:** v1.0.2
 **Release date:** 2026-02-07
 
 ## Highlights
@@ -15,10 +15,10 @@
 ## Published artifacts
 | Runtime | File |
 | --- | --- |
-| Windows x64 | ShouldIDeployApp-win-x64.zip |
-| macOS x64 | ShouldIDeployApp-osx-x64.zip |
-| macOS Arm64 | ShouldIDeployApp-osx-arm64.zip |
-| Linux x64 | ShouldIDeployApp-linux-x64.zip |
+| Windows x64 | ShouldIDeployApp-v1.0.2-win-x64.zip |
+| macOS x64 | ShouldIDeployApp-v1.0.2-osx-x64.zip |
+| macOS Arm64 | ShouldIDeployApp-v1.0.2-osx-arm64.zip |
+| Linux x64 | ShouldIDeployApp-v1.0.2-linux-x64.zip |
 
 Each ZIP contains the self-contained single-file executable produced by `dotnet publish -c Release -r <runtime> --self-contained -p:PublishSingleFile=true`.
 

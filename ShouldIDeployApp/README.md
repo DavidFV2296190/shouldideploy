@@ -71,6 +71,15 @@ dotnet publish src/ShouldIDeployApp -c Release -r osx-arm64 --self-contained tru
 dotnet publish src/ShouldIDeployApp -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o publish/linux-x64
 ```
 
+## Release Assets
+
+GitHub Releases attach one ZIP per platform. Each ZIP contains only the single app binary and includes the version tag in the filename:
+
+- Windows: `ShouldIDeployApp-vX.Y.Z-win-x64.zip`
+- macOS (Intel): `ShouldIDeployApp-vX.Y.Z-osx-x64.zip`
+- macOS (Apple Silicon): `ShouldIDeployApp-vX.Y.Z-osx-arm64.zip`
+- Linux: `ShouldIDeployApp-vX.Y.Z-linux-x64.zip`
+
 ## Project Structure
 
 ```

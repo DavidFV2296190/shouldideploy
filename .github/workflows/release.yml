@@ -41,6 +41,8 @@ jobs:
           fi
         shell: bash
       - name: Publish self-contained builds
+        env:
+          RELEASE_TAG: ${{ steps.tag.outputs.release_tag }}
         run: |
           set -euxo pipefail
           runtimes=(win-x64 osx-x64 osx-arm64 linux-x64)
@@ -73,7 +75,7 @@ jobs:
             # Package only the single executable as the release asset.
             (
               cd "$publish_dir"
-              zip -j "../${{ env.APP_NAME }}-${runtime}.zip" "$(basename "$app_path")"
+              zip -j "../${{ env.APP_NAME }}-${RELEASE_TAG}-${runtime}.zip" "$(basename "$app_path")"
             )
           done
         shell: bash
@@ -84,9 +86,6 @@ jobs:
           name: Should I Deploy Today? ${{ steps.tag.outputs.release_tag }}
           body_path: docs/release-notes.md
           files: |
-            ShouldIDeployApp/publish/ShouldIDeployApp-win-x64.zip
-            ShouldIDeployApp/publish/ShouldIDeployApp-osx-x64.zip
-            ShouldIDeployApp/publish/ShouldIDeployApp-osx-arm64.zip
-            ShouldIDeployApp/publish/ShouldIDeployApp-linux-x64.zip
+            ShouldIDeployApp/publish/ShouldIDeployApp-${{ steps.tag.outputs.release_tag }}-*.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
