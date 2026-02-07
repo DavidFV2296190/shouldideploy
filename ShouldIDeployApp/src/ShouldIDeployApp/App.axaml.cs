@@ -3,6 +3,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
+using ShouldIDeployApp.Services;
 using ShouldIDeployApp.Views;
 
 namespace ShouldIDeployApp;
@@ -37,9 +39,32 @@ public class App : Application
 
             // Prevent app from shutting down when the window is hidden (minimized to tray)
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+            // Update tray icon color when deployment status changes
+            _mainWindow.DeployStatusChanged += OnDeployStatusChanged;
+
+            // Set initial tray icon (default to "safe" white until first check completes)
+            UpdateTrayIcon(canDeploy: true);
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void OnDeployStatusChanged(bool canDeploy)
+    {
+        Dispatcher.UIThread.Post(() => UpdateTrayIcon(canDeploy));
+    }
+
+    private void UpdateTrayIcon(bool canDeploy)
+    {
+        var icons = TrayIcon.GetIcons(this);
+        if (icons is { Count: > 0 })
+        {
+            icons[0].Icon = TrayIconHelper.CreateCircleIcon(canDeploy);
+            icons[0].ToolTipText = canDeploy
+                ? "Should I Deploy? ✅ Yes!"
+                : "Should I Deploy? ⛔ No!";
+        }
     }
 
     private void ShowMainWindow()

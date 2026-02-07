@@ -9,6 +9,11 @@ public partial class MainWindow : Window
     private readonly MainWindowViewModel _viewModel;
     private bool _forceClose;
 
+    /// <summary>
+    /// Raised when the deployment status changes, so the App can update the tray icon color.
+    /// </summary>
+    public event Action<bool>? DeployStatusChanged;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -29,7 +34,7 @@ public partial class MainWindow : Window
             }
         };
 
-        // Ensure status updates happen on the UI thread
+        // Ensure status updates happen on the UI thread and notify tray icon
         _viewModel.PropertyChanged += (_, e) =>
         {
             if (e.PropertyName is nameof(MainWindowViewModel.StatusText)
@@ -38,6 +43,11 @@ public partial class MainWindow : Window
                 or nameof(MainWindowViewModel.IsToastVisible))
             {
                 Dispatcher.UIThread.Post(() => InvalidateVisual());
+            }
+
+            if (e.PropertyName == nameof(MainWindowViewModel.CanDeploy))
+            {
+                DeployStatusChanged?.Invoke(_viewModel.CanDeploy);
             }
         };
 
