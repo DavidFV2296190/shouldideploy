@@ -59,16 +59,16 @@ Create a self-contained single-file executable that requires no .NET runtime:
 
 ```bash
 # Windows
-dotnet publish src/ShouldIDeployApp -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -o publish/win-x64
+dotnet publish src/ShouldIDeployApp -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o publish/win-x64
 
 # macOS (Intel)
-dotnet publish src/ShouldIDeployApp -c Release -r osx-x64 --self-contained -p:PublishSingleFile=true -o publish/osx-x64
+dotnet publish src/ShouldIDeployApp -c Release -r osx-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o publish/osx-x64
 
 # macOS (Apple Silicon)
-dotnet publish src/ShouldIDeployApp -c Release -r osx-arm64 --self-contained -p:PublishSingleFile=true -o publish/osx-arm64
+dotnet publish src/ShouldIDeployApp -c Release -r osx-arm64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o publish/osx-arm64
 
 # Linux
-dotnet publish src/ShouldIDeployApp -c Release -r linux-x64 --self-contained -p:PublishSingleFile=true -o publish/linux-x64
+dotnet publish src/ShouldIDeployApp -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -p:DebugType=None -p:DebugSymbols=false -o publish/linux-x64
 ```
 
 ## Project Structure

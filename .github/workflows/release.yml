@@ -20,6 +20,7 @@ jobs:
       SOLUTION_PATH: ShouldIDeployApp/ShouldIDeployApp.sln
       PROJECT_DIR: ShouldIDeployApp/src/ShouldIDeployApp
       PUBLISH_BASE: ShouldIDeployApp/publish
+      APP_NAME: ShouldIDeployApp
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -47,12 +48,32 @@ jobs:
           for runtime in "${runtimes[@]}"; do
             dotnet publish "${{ env.PROJECT_DIR }}" \
               -c Release -r "$runtime" \
-              --self-contained \
+              --self-contained true \
               -p:PublishSingleFile=true \
+              -p:IncludeNativeLibrariesForSelfExtract=true \
+              -p:DebugType=None \
+              -p:DebugSymbols=false \
               -o "${{ env.PUBLISH_BASE }}/${runtime}"
+
+            publish_dir="${{ env.PUBLISH_BASE }}/${runtime}"
+            if [[ "$runtime" == win-* ]]; then
+              app_path="${publish_dir}/${{ env.APP_NAME }}.exe"
+            else
+              app_path="${publish_dir}/${{ env.APP_NAME }}"
+              chmod +x "$app_path" || true
+            fi
+
+            if [[ ! -f "$app_path" ]]; then
+              echo "Expected single-file app binary not found at: $app_path" >&2
+              echo "Directory contents:" >&2
+              ls -la "$publish_dir" >&2
+              exit 1
+            fi
+
+            # Package only the single executable as the release asset.
             (
-              cd "${{ env.PUBLISH_BASE }}/${runtime}"
-              zip -r "../ShouldIDeployApp-${runtime}.zip" .
+              cd "$publish_dir"
+              zip -j "../${{ env.APP_NAME }}-${runtime}.zip" "$(basename "$app_path")"
             )
           done
         shell: bash
