@@ -62,8 +62,8 @@ public class App : Application
         {
             icons[0].Icon = TrayIconHelper.CreateTrayIcon(canDeploy);
             icons[0].ToolTipText = canDeploy
-                ? "Should I Deploy? ✅ Yes!"
-                : "Should I Deploy? ⛔ No!";
+                ? "✅ Yes! By!"
+                : "⛔ No! Damn Noob!";
         }
     }
 
