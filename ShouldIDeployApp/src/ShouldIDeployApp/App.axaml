@@ -5,4 +5,20 @@
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>
+
+    <TrayIcon.Icons>
+        <TrayIcons>
+            <TrayIcon ToolTipText="Should I Deploy Today?"
+                      Command="{Binding OpenCommand}">
+                <TrayIcon.Menu>
+                    <NativeMenu>
+                        <NativeMenuItem Header="Open" Command="{Binding OpenCommand}" />
+                        <NativeMenuItem Header="Refresh" Command="{Binding RefreshCommand}" />
+                        <NativeMenuItemSeparator />
+                        <NativeMenuItem Header="Exit" Command="{Binding ExitCommand}" />
+                    </NativeMenu>
+                </TrayIcon.Menu>
+            </TrayIcon>
+        </TrayIcons>
+    </TrayIcon.Icons>
 </Application>

@@ -8,6 +8,7 @@ namespace ShouldIDeployApp.ViewModels;
 public partial class MainWindowViewModel : ObservableObject, IDisposable
 {
     private readonly NotificationScheduler _scheduler;
+    private readonly AppSettings _settings;
 
     [ObservableProperty]
     private bool _canDeploy;
@@ -48,8 +49,13 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
 
     public MainWindowViewModel()
     {
+        _settings = AppSettings.Load();
         AvailableTimezones = GetCommonTimezones();
-        _selectedTimezone = TimeHelper.DefaultTimezone;
+        _selectedTimezone = _settings.Timezone;
+        _isFullScreen = _settings.IsFullScreen;
+
+        if (_isFullScreen)
+            _fullScreenButtonText = "⊡ Exit Full Screen";
 
         _scheduler = new NotificationScheduler(_selectedTimezone);
         _scheduler.OnStatusUpdated += OnStatusUpdated;
@@ -64,11 +70,15 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     partial void OnSelectedTimezoneChanged(string value)
     {
         _scheduler.UpdateTimezone(value);
+        _settings.Timezone = value;
+        _settings.Save();
     }
 
     partial void OnIsFullScreenChanged(bool value)
     {
         FullScreenButtonText = value ? "⊡ Exit Full Screen" : "⛶ Full Screen";
+        _settings.IsFullScreen = value;
+        _settings.Save();
     }
 
     [RelayCommand]
@@ -78,7 +88,7 @@ public partial class MainWindowViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
-    private void Refresh()
+    public void Refresh()
     {
         var time = new TimeHelper(SelectedTimezone);
         var result = DeploymentChecker.GetResult(time);

@@ -8,6 +8,8 @@ Built with [Avalonia UI](https://avaloniaui.net/) for cross-platform support (Wi
 
 - **Deployment Decision Engine** — Checks day of week, time of day, and special dates (Friday the 13th, Christmas, New Year's) to determine if it's safe to deploy
 - **Toast Notifications** — Smart, non-intrusive notifications that keep developers informed without being annoying
+- **System Tray Icon** — Closing the window minimizes to tray; right-click tray icon for Open, Refresh, and Exit
+- **Persistent Settings** — Timezone and full-screen preferences are saved to `~/ShouldIDeployApp/settings.json`
 - **Full Screen Mode** — Toggle full screen to dedicate a monitor to always showing deployment status
 - **Timezone Support** — Select any timezone to check deployment safety for your team's location
 - **Completely Standalone** — No internet connection or external services needed
@@ -80,17 +82,19 @@ ShouldIDeployApp/
 │   │   ├── DeploymentChecker.cs  # Core deployment decision engine
 │   │   └── Reasons.cs            # Witty deployment messages
 │   ├── Services/
-│   │   └── NotificationScheduler.cs  # Smart toast notification scheduler
+│   │   ├── NotificationScheduler.cs  # Smart toast notification scheduler
+│   │   └── AppSettings.cs           # Settings persistence to user home directory
 │   ├── ViewModels/
 │   │   └── MainWindowViewModel.cs    # MVVM view model
 │   ├── Views/
 │   │   ├── MainWindow.axaml         # UI layout (XAML)
-│   │   └── MainWindow.axaml.cs      # Window code-behind
-│   ├── App.axaml                    # Application definition
-│   ├── App.axaml.cs                 # Application startup
+│   │   └── MainWindow.axaml.cs      # Window code-behind (minimize to tray)
+│   ├── App.axaml                    # Application definition (tray icon + context menu)
+│   ├── App.axaml.cs                 # Application startup + tray icon commands
 │   └── Program.cs                   # Entry point
 └── tests/ShouldIDeployApp.Tests/    # Unit tests
     ├── TimeHelperTests.cs
     ├── DeploymentCheckerTests.cs
-    └── NotificationSchedulerTests.cs
+    ├── NotificationSchedulerTests.cs
+    └── AppSettingsTests.cs
 ```

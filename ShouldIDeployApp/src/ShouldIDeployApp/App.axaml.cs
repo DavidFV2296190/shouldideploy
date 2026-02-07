@@ -1,4 +1,6 @@
+using System.Windows.Input;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using ShouldIDeployApp.Views;
@@ -7,6 +9,20 @@ namespace ShouldIDeployApp;
 
 public class App : Application
 {
+    private MainWindow? _mainWindow;
+
+    public ICommand OpenCommand { get; }
+    public ICommand RefreshCommand { get; }
+    public ICommand ExitCommand { get; }
+
+    public App()
+    {
+        OpenCommand = new SimpleCommand(ShowMainWindow);
+        RefreshCommand = new SimpleCommand(RefreshStatus);
+        ExitCommand = new SimpleCommand(ExitApplication);
+        DataContext = this;
+    }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -16,9 +32,58 @@ public class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow();
+            _mainWindow = new MainWindow();
+            desktop.MainWindow = _mainWindow;
+
+            // Prevent app from shutting down when the window is hidden (minimized to tray)
+            desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+
+    private void ShowMainWindow()
+    {
+        if (_mainWindow is null) return;
+        _mainWindow.Show();
+        _mainWindow.WindowState = WindowState.Normal;
+        _mainWindow.Activate();
+    }
+
+    private void RefreshStatus()
+    {
+        _mainWindow?.TrayRefresh();
+    }
+
+    private void ExitApplication()
+    {
+        _mainWindow?.ForceClose();
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.Shutdown();
+        }
+    }
+}
+
+/// <summary>
+/// Minimal ICommand implementation for tray icon menu commands.
+/// </summary>
+internal sealed class SimpleCommand : ICommand
+{
+    private readonly Action _execute;
+
+    public SimpleCommand(Action execute)
+    {
+        _execute = execute;
+    }
+
+    public bool CanExecute(object? parameter) => true;
+
+    public void Execute(object? parameter) => _execute();
+
+    public event EventHandler? CanExecuteChanged
+    {
+        add { }
+        remove { }
     }
 }
