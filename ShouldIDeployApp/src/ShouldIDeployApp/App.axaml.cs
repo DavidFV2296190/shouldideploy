@@ -43,8 +43,8 @@ public class App : Application
             // Update tray icon color when deployment status changes
             _mainWindow.DeployStatusChanged += OnDeployStatusChanged;
 
-            // Set initial tray icon (default to "safe" white until first check completes)
-            UpdateTrayIcon(canDeploy: true);
+            // Set initial tray icon based on actual deployment status
+            UpdateTrayIcon(_mainWindow.CurrentDeployStatus);
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -60,7 +60,7 @@ public class App : Application
         var icons = TrayIcon.GetIcons(this);
         if (icons is { Count: > 0 })
         {
-            icons[0].Icon = TrayIconHelper.CreateCircleIcon(canDeploy);
+            icons[0].Icon = TrayIconHelper.CreateStatusIcon(canDeploy);
             icons[0].ToolTipText = canDeploy
                 ? "Should I Deploy? ✅ Yes!"
                 : "Should I Deploy? ⛔ No!";

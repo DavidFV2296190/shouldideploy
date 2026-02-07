@@ -6,32 +6,35 @@ using Avalonia.Media.Imaging;
 namespace ShouldIDeployApp.Services;
 
 /// <summary>
-/// Generates a colored circle bitmap for use as the system tray icon.
-/// White circle when it's safe to deploy, red (#FF4136) circle when it's not.
+/// Generates an emoji-based bitmap for use as the system tray icon.
+/// Shows ✅ when it's safe to deploy, ⛔ when it's not.
 /// </summary>
 public static class TrayIconHelper
 {
     private const int IconSize = 64;
 
     /// <summary>
-    /// Creates a WindowIcon containing a filled circle of the specified color.
+    /// Creates a WindowIcon displaying ✅ or ⛔ based on deployment status.
     /// </summary>
-    public static WindowIcon CreateCircleIcon(bool canDeploy)
+    public static WindowIcon CreateStatusIcon(bool canDeploy)
     {
-        var color = canDeploy ? Color.Parse("#FFFFFF") : Color.Parse("#FF4136");
-        var borderColor = canDeploy ? Color.Parse("#CCCCCC") : Color.Parse("#FF4136");
+        var emoji = canDeploy ? "✅" : "⛔";
 
         using var bitmap = new RenderTargetBitmap(new PixelSize(IconSize, IconSize), new Vector(96, 96));
         using (var ctx = bitmap.CreateDrawingContext())
         {
-            // Draw filled circle
-            var center = new Point(IconSize / 2.0, IconSize / 2.0);
-            var radius = (IconSize / 2.0) - 2;
-            var geometry = new EllipseGeometry(new Rect(
-                center.X - radius, center.Y - radius,
-                radius * 2, radius * 2));
+            var formattedText = new FormattedText(
+                emoji,
+                System.Globalization.CultureInfo.InvariantCulture,
+                FlowDirection.LeftToRight,
+                Typeface.Default,
+                48,
+                Brushes.Black);
 
-            ctx.DrawGeometry(new SolidColorBrush(color), new Pen(new SolidColorBrush(borderColor), 2), geometry);
+            // Center the emoji in the icon
+            var x = (IconSize - formattedText.Width) / 2;
+            var y = (IconSize - formattedText.Height) / 2;
+            ctx.DrawText(formattedText, new Point(x, y));
         }
 
         var stream = new MemoryStream();

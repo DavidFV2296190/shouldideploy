@@ -14,6 +14,11 @@ public partial class MainWindow : Window
     /// </summary>
     public event Action<bool>? DeployStatusChanged;
 
+    /// <summary>
+    /// Gets the current deployment status from the view model.
+    /// </summary>
+    public bool CurrentDeployStatus => _viewModel.CanDeploy;
+
     public MainWindow()
     {
         InitializeComponent();
