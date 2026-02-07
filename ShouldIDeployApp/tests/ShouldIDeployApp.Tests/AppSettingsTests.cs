@@ -8,7 +8,7 @@ public class AppSettingsTests
     public void Load_WhenNoFileExists_ReturnsDefaults()
     {
         var settings = new AppSettings();
-        Assert.Equal("UTC", settings.Timezone);
+        Assert.Equal(TimeZoneInfo.Local.Id, settings.Timezone);
         Assert.False(settings.IsFullScreen);
     }
 
@@ -47,10 +47,10 @@ public class AppSettingsTests
     }
 
     [Fact]
-    public void DefaultTimezone_IsUTC()
+    public void DefaultTimezone_IsLocalTimezone()
     {
         var settings = new AppSettings();
-        Assert.Equal("UTC", settings.Timezone);
+        Assert.Equal(TimeZoneInfo.Local.Id, settings.Timezone);
     }
 
     [Fact]

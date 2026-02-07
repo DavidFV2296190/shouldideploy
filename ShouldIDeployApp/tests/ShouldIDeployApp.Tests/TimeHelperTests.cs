@@ -194,6 +194,6 @@ public class TimeHelperTests
     public void Constructor_WithNullTimezone_UsesDefault()
     {
         var time = new TimeHelper(null);
-        Assert.Equal("UTC", time.TimezoneName);
+        Assert.Equal(TimeZoneInfo.Local.Id, time.TimezoneName);
     }
 }

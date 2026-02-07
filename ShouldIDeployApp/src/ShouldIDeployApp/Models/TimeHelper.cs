@@ -6,7 +6,7 @@ namespace ShouldIDeployApp.Models;
 /// </summary>
 public class TimeHelper
 {
-    public const string DefaultTimezone = "UTC";
+    public static string DefaultTimezone => TimeZoneInfo.Local.Id;
 
     private readonly TimeZoneInfo _timeZone;
     private readonly DateTime? _customDate;

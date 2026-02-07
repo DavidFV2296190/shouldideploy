@@ -15,7 +15,7 @@ public class AppSettings
     private static readonly string SettingsFilePath = Path.Combine(
         SettingsDirectory, "settings.json");
 
-    public string Timezone { get; set; } = "UTC";
+    public string Timezone { get; set; } = TimeZoneInfo.Local.Id;
     public bool IsFullScreen { get; set; }
 
     public static AppSettings Load()

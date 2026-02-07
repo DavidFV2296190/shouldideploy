@@ -17,4 +17,9 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\dots.png" />
+    <AvaloniaResource Include="Assets\dots-red.png" />
+  </ItemGroup>
+
 </Project>
