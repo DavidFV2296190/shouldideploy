@@ -17,10 +17,9 @@ jobs:
   release:
     runs-on: ubuntu-latest
     env:
-      APP_DIR: ShouldIDeployApp
-      SOLUTION_PATH: ShouldIDeployApp.sln
-      PROJECT_DIR: src/ShouldIDeployApp
-      PUBLISH_BASE: publish
+      SOLUTION_PATH: ShouldIDeployApp/ShouldIDeployApp.sln
+      PROJECT_DIR: ShouldIDeployApp/src/ShouldIDeployApp
+      PUBLISH_BASE: ShouldIDeployApp/publish
     steps:
       - uses: actions/checkout@v4
       - name: Setup .NET
@@ -28,10 +27,8 @@ jobs:
         with:
           dotnet-version: '8.0.x'
       - name: Restore solution
-        working-directory: ${{ env.APP_DIR }}
         run: dotnet restore ${{ env.SOLUTION_PATH }}
       - name: Run unit tests
-        working-directory: ${{ env.APP_DIR }}
         run: dotnet test ${{ env.SOLUTION_PATH }} --no-restore
       - name: Determine release tag
         id: tag
@@ -43,7 +40,6 @@ jobs:
           fi
         shell: bash
       - name: Publish self-contained builds
-        working-directory: ${{ env.APP_DIR }}
         run: |
           set -euxo pipefail
           runtimes=(win-x64 osx-x64 osx-arm64 linux-x64)
