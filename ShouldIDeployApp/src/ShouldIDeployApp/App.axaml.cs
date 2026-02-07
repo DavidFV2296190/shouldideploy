@@ -60,7 +60,7 @@ public class App : Application
         var icons = TrayIcon.GetIcons(this);
         if (icons is { Count: > 0 })
         {
-            icons[0].Icon = TrayIconHelper.CreateStatusIcon(canDeploy);
+            icons[0].Icon = TrayIconHelper.CreateTrayIcon(canDeploy);
             icons[0].ToolTipText = canDeploy
                 ? "Should I Deploy? ✅ Yes!"
                 : "Should I Deploy? ⛔ No!";

@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Threading;
+using ShouldIDeployApp.Services;
 using ShouldIDeployApp.ViewModels;
 
 namespace ShouldIDeployApp.Views;
@@ -53,11 +54,20 @@ public partial class MainWindow : Window
             if (e.PropertyName == nameof(MainWindowViewModel.CanDeploy))
             {
                 DeployStatusChanged?.Invoke(_viewModel.CanDeploy);
+                Dispatcher.UIThread.Post(() => UpdateWindowIcon(_viewModel.CanDeploy));
             }
         };
 
+        // Set initial window icon
+        UpdateWindowIcon(_viewModel.CanDeploy);
+
         // Start the notification scheduler
         _viewModel.Initialize();
+    }
+
+    private void UpdateWindowIcon(bool canDeploy)
+    {
+        Icon = TrayIconHelper.CreateWindowIcon(canDeploy);
     }
 
     /// <summary>
